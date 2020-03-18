@@ -172,8 +172,10 @@ model.compile(optimizer=adam, loss=ssd_loss.compute_loss)
 
 # Optional: If you have enough memory, consider loading the images into memory for the reasons explained above.
 
-train_dataset = DataGenerator(load_images_into_memory=False, hdf5_dataset_path=None)
-val_dataset = DataGenerator(load_images_into_memory=False, hdf5_dataset_path=None)
+# train_dataset = DataGenerator(load_images_into_memory=False, hdf5_dataset_path=None)
+# val_dataset = DataGenerator(load_images_into_memory=False, hdf5_dataset_path=None)
+train_dataset = DataGenerator(load_images_into_memory=False, hdf5_dataset_path='dataset_pascal_voc_07+12_trainval.h5')
+val_dataset = DataGenerator(load_images_into_memory=False, hdf5_dataset_path='dataset_pascal_voc_07_test.h5')
 
 # 2: Parse the image and label lists for the training and validation datasets. This can take a while.
 
@@ -204,41 +206,41 @@ classes = ['background',
            'horse', 'motorbike', 'person', 'pottedplant',
            'sheep', 'sofa', 'train', 'tvmonitor']
 
-train_dataset.parse_xml(images_dirs=[VOC_2007_images_dir,
-                                     VOC_2012_images_dir],
-                        image_set_filenames=[VOC_2007_trainval_image_set_filename,
-                                             VOC_2012_trainval_image_set_filename],
-                        annotations_dirs=[VOC_2007_annotations_dir,
-                                          VOC_2012_annotations_dir],
-                        classes=classes,
-                        include_classes='all',
-                        exclude_truncated=False,
-                        exclude_difficult=False,
-                        ret=False)
+# train_dataset.parse_xml(images_dirs=[VOC_2007_images_dir,
+#                                      VOC_2012_images_dir],
+#                         image_set_filenames=[VOC_2007_trainval_image_set_filename,
+#                                              VOC_2012_trainval_image_set_filename],
+#                         annotations_dirs=[VOC_2007_annotations_dir,
+#                                           VOC_2012_annotations_dir],
+#                         classes=classes,
+#                         include_classes='all',
+#                         exclude_truncated=False,
+#                         exclude_difficult=False,
+#                         ret=False)
 
-val_dataset.parse_xml(images_dirs=[VOC_2007_images_dir],
-                      image_set_filenames=[VOC_2007_test_image_set_filename],
-                      annotations_dirs=[VOC_2007_annotations_dir],
-                      classes=classes,
-                      include_classes='all',
-                      exclude_truncated=False,
-                      exclude_difficult=True,
-                      ret=False)
+# val_dataset.parse_xml(images_dirs=[VOC_2007_images_dir],
+#                       image_set_filenames=[VOC_2007_test_image_set_filename],
+#                       annotations_dirs=[VOC_2007_annotations_dir],
+#                       classes=classes,
+#                       include_classes='all',
+#                       exclude_truncated=False,
+#                       exclude_difficult=True,
+#                       ret=False)
 
-# Optional: Convert the dataset into an HDF5 dataset. This will require more disk space, but will
-# speed up the training. Doing this is not relevant in case you activated the `load_images_into_memory`
-# option in the constructor, because in that cas the images are in memory already anyway. If you don't
-# want to create HDF5 datasets, comment out the subsequent two function calls.
+# # Optional: Convert the dataset into an HDF5 dataset. This will require more disk space, but will
+# # speed up the training. Doing this is not relevant in case you activated the `load_images_into_memory`
+# # option in the constructor, because in that cas the images are in memory already anyway. If you don't
+# # want to create HDF5 datasets, comment out the subsequent two function calls.
 
-train_dataset.create_hdf5_dataset(file_path='dataset_pascal_voc_07+12_trainval.h5',
-                                  resize=False,
-                                  variable_image_size=True,
-                                  verbose=True)
+# train_dataset.create_hdf5_dataset(file_path='dataset_pascal_voc_07+12_trainval.h5',
+#                                   resize=False,
+#                                   variable_image_size=True,
+#                                   verbose=True)
 
-val_dataset.create_hdf5_dataset(file_path='dataset_pascal_voc_07_test.h5',
-                                resize=False,
-                                variable_image_size=True,
-                                verbose=True)
+# val_dataset.create_hdf5_dataset(file_path='dataset_pascal_voc_07_test.h5',
+#                                 resize=False,
+#                                 variable_image_size=True,
+#                                 verbose=True)
 
 
 
@@ -330,9 +332,14 @@ def lr_schedule(epoch):
 
 
 # Define model callbacks.
+class SafeModelCheckpoint(keras.callbacks.ModelCheckpoint):
+    def on_epoch_end(self, epoch, logs=None):
+        if logs != None and logs != {}:
+            super().on_epoch_end(self, epoch, logs)
+
 
 # TODO: Set the filepath under which you want to save the model.
-model_checkpoint = keras.callbacks.ModelCheckpoint(filepath='ssd300_pascal_07+12_epoch-{epoch:02d}_loss-{loss:.4f}_val_loss-{val_loss:.4f}.h5',
+model_checkpoint = SafeModelCheckpoint(filepath='ssd300_pascal_07+12_epoch-{epoch:02d}_loss-{loss:.4f}_val_loss-{val_loss:.4f}.h5',
                                    monitor='val_loss',
                                    verbose=1,
                                    save_best_only=True,
