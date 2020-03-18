@@ -18,10 +18,10 @@ limitations under the License.
 
 from __future__ import division
 import numpy as np
-from keras.models import Model
-from keras.layers import Input, Lambda, Activation, Conv2D, MaxPooling2D, ZeroPadding2D, Reshape, Concatenate
-from keras.regularizers import l2
-import keras.backend as K
+import tensorflow.keras as keras
+from tensorflow.keras.layers import Input, Lambda, Activation, Conv2D, MaxPooling2D, ZeroPadding2D, Reshape, Concatenate
+from tensorflow.keras.regularizers import l2
+import tensorflow.keras.backend as K
 
 from keras_layers.keras_layer_AnchorBoxes import AnchorBoxes
 from keras_layers.keras_layer_L2Normalization import L2Normalization
@@ -419,7 +419,7 @@ def ssd_300(image_size,
     predictions = Concatenate(axis=2, name='predictions')([mbox_conf_softmax, mbox_loc, mbox_priorbox])
 
     if mode == 'training':
-        model = Model(inputs=x, outputs=predictions)
+        model = keras.Model(inputs=x, outputs=predictions)
     elif mode == 'inference':
         decoded_predictions = DecodeDetections(confidence_thresh=confidence_thresh,
                                                iou_threshold=iou_threshold,
@@ -430,7 +430,7 @@ def ssd_300(image_size,
                                                img_height=img_height,
                                                img_width=img_width,
                                                name='decoded_predictions')(predictions)
-        model = Model(inputs=x, outputs=decoded_predictions)
+        model = keras.Model(inputs=x, outputs=decoded_predictions)
     elif mode == 'inference_fast':
         decoded_predictions = DecodeDetectionsFast(confidence_thresh=confidence_thresh,
                                                    iou_threshold=iou_threshold,
@@ -441,7 +441,7 @@ def ssd_300(image_size,
                                                    img_height=img_height,
                                                    img_width=img_width,
                                                    name='decoded_predictions')(predictions)
-        model = Model(inputs=x, outputs=decoded_predictions)
+        model = keras.Model(inputs=x, outputs=decoded_predictions)
     else:
         raise ValueError("`mode` must be one of 'training', 'inference' or 'inference_fast', but received '{}'.".format(mode))
 
