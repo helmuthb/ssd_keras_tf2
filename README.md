@@ -1,5 +1,10 @@
 ## PORTING to TF2 
-Current progress is that the ssd300_training.py script seems to be running with TF2.2.0rc, But does not appear to use GPU.
+Current progress is that the ssd300_training.py script seems to be running with TF2.2.0rc, on the GPU but something is not right because the GPU usage is very low.
+
+There is this error:
+'''WARNING:tensorflow:Gradients do not exist for variables ['conv1_1/bias:0', 'conv1_2/bias:0', 'conv2_1/bias:0', 'conv2_2/bias:0', 'conv3_1/bias:0', 'conv3_2/bias:0', 'conv3_3/bias:0', 'conv4_1/bias:0', 'conv4_2/bias:0', 'conv4_3/bias:0', 'conv5_1/bias:0', 'conv5_2/bias:0', 'conv5_3/bias:0', 'fc6/bias:0', 'fc7/bias:0', 'conv6_1/bias:0', 'conv6_2/bias:0', 'conv7_1/bias:0', 'conv7_2/bias:0', 'conv8_1/bias:0', 'conv8_2/bias:0', 'conv9_1/bias:0', 'conv4_3_norm/conv4_3_norm_gamma:0', 'conv9_2/bias:0', 'conv4_3_norm_mbox_conf/bias:0', 'fc7_mbox_conf/bias:0', 'conv6_2_mbox_conf/bias:0', 'conv7_2_mbox_conf/bias:0', 'conv8_2_mbox_conf/bias:0', 'conv9_2_mbox_conf/bias:0', 'conv4_3_norm_mbox_loc/bias:0', 'fc7_mbox_loc/bias:0', 'conv6_2_mbox_loc/bias:0', 'conv7_2_mbox_loc/bias:0', 'conv8_2_mbox_loc/bias:0', 'conv9_2_mbox_loc/bias:0'] when minimizing the loss.'''
+
+This probably indicates that there is something wrong in the keras_loss_function.py
 
 ## SSD: Single-Shot MultiBox Detector implementation in Keras
 ---
