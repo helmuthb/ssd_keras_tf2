@@ -1,3 +1,6 @@
+## PORTING to TF2 
+Current progress is that the ssd300_training.py script seems to be running with TF2.2.0rc, But does not appear to use GPU.
+
 ## SSD: Single-Shot MultiBox Detector implementation in Keras
 ---
 ### Contents
