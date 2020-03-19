@@ -378,13 +378,13 @@ initial_epoch   = 0
 final_epoch     = 120
 steps_per_epoch = 1000
 
-history = model.fit_generator(generator=train_generator,
-                              steps_per_epoch=steps_per_epoch,
-                              epochs=final_epoch,
-                              callbacks=callbacks,
-                              validation_data=val_generator,
-                              validation_steps=ceil(val_dataset_size/batch_size),
-                              initial_epoch=initial_epoch)
+history = model.fit(x=train_generator,
+                    steps_per_epoch=steps_per_epoch,
+                    epochs=final_epoch,
+                    callbacks=callbacks,
+                    validation_data=val_generator,
+                    validation_steps=ceil(val_dataset_size/batch_size),
+                    initial_epoch=initial_epoch)
 
 
 # ## 6. Make predictions
